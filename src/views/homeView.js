@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import Dropzone from 'react-dropzone'
+// import speech from 'google-speech-api'
 import getEnglishSpeech from 'actions/getEnglishSpeech'
 
 class HomeView extends Component {
@@ -17,6 +19,7 @@ class HomeView extends Component {
     this.onResult = this.onResult.bind(this)
     this.startListening = this.startListening.bind(this)
     this.stopListening = this.stopListening.bind(this)
+    this.onDrop = this.onDrop.bind(this)
     this.englishTimer = null
   }
 
@@ -101,6 +104,20 @@ class HomeView extends Component {
     this.setState({hasRecognition: true})
   }
 
+  onDrop (files) {
+    for(let i=0;i<=files.length;i++){
+      const opts = {
+        file: files[i],
+        key: 'AIzaSyAWCze2AXgAA7kgUMtLubpvmLuDGkbUP8g'
+      }
+      
+      // speech(opts, function (err, results) {
+      //   console.log(results);
+      //   // [{result: [{alternative: [{transcript: '...'}]}]}]
+      // })
+    }
+  }
+
   render () {
     return (
       <div>
@@ -109,6 +126,9 @@ class HomeView extends Component {
         <h3> {this.state.finalScript}</h3>
         <br />
         <h4> {this.state.finalEnglishScript} </h4>
+        <Dropzone onDrop={this.onDrop}>
+          <p>Select or drop your voice note</p>
+        </Dropzone>
       </div>
     )
   }
