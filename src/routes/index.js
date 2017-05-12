@@ -64,6 +64,18 @@ export default (store) => (
   <Route path='/' onChange={handleChange}>
     {getHomeRoute()}
     <Route
+      chunkname='newHomeView'
+      path='/home'
+      pageType='new-home-page'
+      getComponent={(nextState, cb) => {
+        require.ensure(['views/newHomeView'], (require) => {
+          requireStyle('newHomeView').then(() => {
+            cb(null, require('views/newHomeView').default)
+          })
+        }, 'newHomeView')
+      }}
+    />
+    <Route
       chunkname='homeView'
       path='/:id'
       pageType='home-page'

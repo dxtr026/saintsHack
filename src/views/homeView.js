@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import Dropzone from 'react-dropzone'
-// import speech from 'google-speech-api'
-import getEnglishSpeech from 'actions/getEnglishSpeech'
 import saveVoice from 'actions/common'
+import SummaryBot from 'utils/summary-bot'
+import getEnglishSpeech from 'actions/getEnglishSpeech'
+import getSummary from 'actions/getSummary'
 
 class HomeView extends Component {
   constructor(props) {
@@ -11,8 +12,10 @@ class HomeView extends Component {
       recognizing: false,
       ignoreOnend: false,
       finalScript: '',
-      hasRecognition: false
+      hasRecognition: false,
+      summary: ''
     }
+    this.speechParts = []
     this.recognition = null
     this.onStart = this.onStart.bind(this)
     this.onError = this.onError.bind(this)
@@ -21,6 +24,7 @@ class HomeView extends Component {
     this.startListening = this.startListening.bind(this)
     this.stopListening = this.stopListening.bind(this)
     this.onDrop = this.onDrop.bind(this)
+    this.createSummary = this.createSummary.bind(this)
     this.englishTimer = null
   }
 
@@ -56,6 +60,26 @@ class HomeView extends Component {
     this.setState({recognizing: false})
   }
 
+  createSummary (response) {
+    if (response && response.data && response.data.summary) {
+      this.setState({summary: response.data.summary})
+    }
+  }
+
+  getLanguageResults (interimScript, lng = 'en') {
+    return getEnglishSpeech(interimScript, lng).then(({data: {data}}) => {
+      if (data.translations && data.translations.length) {
+        let results = ''
+        data.translations.forEach((t, i) => {
+          results += t.translatedText
+        })
+        return results
+      }
+    }, (error) => {
+      console.log('error ===>', error)
+    })
+  }
+
   onResult (event) {
     let interimScript = ''
     // let finalScript = this.state.finalScript
@@ -67,23 +91,22 @@ class HomeView extends Component {
       // }
     }
     // console.log(interimScript)
+    this.speechParts.push(interimScript)
+    console.log('-->> parts', interimScript)
     this.setState({finalScript: `${interimScript}`})
     if (this.englishTimer) {
       clearTimeout(this.englishTimer)
       this.englishTimer = null
     }
     this.englishTimer = setTimeout(() => {
-      getEnglishSpeech(interimScript).then(({data: {data}}) => {
-        console.log('data ===>', data)
-        if (data.translations && data.translations.length) {
-          let results = ''
-          data.translations.forEach((t, i) => {
-            results += t.translatedText
-          })
-          this.setState({finalEnglishScript: results})
-        }
-      }, (error) => {
-        console.log('error ===>', error)
+      this.getLanguageResults(interimScript).then((results) => {
+        this.setState({finalEnglishScript: results})
+        getSummary(results).then(this.createSummary)
+      })
+      this.getLanguageResults(interimScript, 'hi').then((results) => {
+        this.getLanguageResults(results).then((res) => {
+          console.log('english to hindi to english', res)          
+        })
       })
     }, 2000)
   }
@@ -124,12 +147,17 @@ class HomeView extends Component {
       <div>
         {this.state.hasRecognition && <button onClick={this.startListening}>Start</button>}
         {this.state.hasRecognition && <button onClick={this.stopListening}>Stop</button>}
+        <h2> Original Text </h2>
         <h3> {this.state.finalScript}</h3>
         <br />
+        <h2>English Translation</h2>
         <h4> {this.state.finalEnglishScript} </h4>
         <Dropzone onDrop={this.onDrop}>
           <p>Select or drop your voice note</p>
         </Dropzone>
+        <br />
+        <h2> Summary from our Bot </h2>
+        <h4> {this.state.summary} </h4>
       </div>
     )
   }
