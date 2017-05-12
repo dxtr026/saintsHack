@@ -23,6 +23,8 @@ import cleanUrl from './middlewares/cleanUrl'
 import https from 'https'
 import fs from 'fs'
 import path from 'path'
+import google_speech from 'google-speech'
+// import speech from 'google-speech-api'
 
 import recoSpeech from 'server/helper/speech'
 
@@ -86,6 +88,8 @@ if (config.cdn_path=="") {
   app.use(express.static('dist'))
 }
 
+
+
 app.use((req, res, next) => {
   const store = configureStore({}, createMemoryHistory)
   req.store = store
@@ -119,6 +123,40 @@ app.post('/upload', (req, res, next) => {
 //    );
 //  }
 // })
+
+app.use((req, res, next) => {
+  // console.log('req.url : ',req)
+  if(req.url === '/upload'){
+      google_speech.ASR({
+        developer_key: 'AIzaSyAWCze2AXgAA7kgUMtLubpvmLuDGkbUP8g',
+        file: 'speech.mp3',
+      }, function(err, httpResponse, xml){
+        if(err){
+            console.log('failed again... : ',err);
+          }else{
+            console.log(httpResponse.statusCode, xml)
+          }
+        }
+    );
+
+
+
+    // var opts = {
+    //   file: 'speech.mp3',
+    //   key: 'AIzaSyAWCze2AXgAA7kgUMtLubpvmLuDGkbUP8g'
+    // }
+    // console.log('test : ',opts)
+    // speech(opts, function (err, results) {
+    //   console.log('err : ',err)
+    //   // [{result: [{alternative: [{transcript: '...'}]}]}]
+    //   res.end(JSON.stringify(results))
+    //   return
+    // })
+    // res.end('asdf')
+    // return
+  }
+})
+
 
 app.use((req, res, next) => {
   match({
@@ -173,6 +211,9 @@ app.use((req, res, next) => {
     })
   })
 })
+
+
+
 app.use((req, res, next) => {
   fetchComponentsData(req.store.dispatch, res.renderProps.components, req.store.getState(), Object.assign({}, res.renderProps.params, res.renderProps.query), req).then(() => {
     return next()

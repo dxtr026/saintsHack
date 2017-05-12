@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import Dropzone from 'react-dropzone'
+import saveVoice from 'actions/common'
 import SummaryBot from 'utils/summary-bot'
 import getEnglishSpeech from 'actions/getEnglishSpeech'
 import getSummary from 'actions/getSummary'
@@ -21,6 +23,7 @@ class HomeView extends Component {
     this.onResult = this.onResult.bind(this)
     this.startListening = this.startListening.bind(this)
     this.stopListening = this.stopListening.bind(this)
+    this.onDrop = this.onDrop.bind(this)
     this.createSummary = this.createSummary.bind(this)
     this.englishTimer = null
   }
@@ -125,6 +128,20 @@ class HomeView extends Component {
     this.setState({hasRecognition: true})
   }
 
+  onDrop (files) {
+    for(let i=0;i<=files.length;i++){
+      const opts = {
+        file: files[i],
+        key: 'AIzaSyAWCze2AXgAA7kgUMtLubpvmLuDGkbUP8g'
+      }
+      saveVoice(files[i])
+      // speech(opts, function (err, results) {
+      //   console.log(results);
+      //   // [{result: [{alternative: [{transcript: '...'}]}]}]
+      // })
+    }
+  }
+
   render () {
     return (
       <div>
@@ -135,6 +152,9 @@ class HomeView extends Component {
         <br />
         <h2>English Translation</h2>
         <h4> {this.state.finalEnglishScript} </h4>
+        <Dropzone onDrop={this.onDrop}>
+          <p>Select or drop your voice note</p>
+        </Dropzone>
         <br />
         <h2> Summary from our Bot </h2>
         <h4> {this.state.summary} </h4>
