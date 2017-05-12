@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Dropzone from 'react-dropzone'
 // import speech from 'google-speech-api'
 import getEnglishSpeech from 'actions/getEnglishSpeech'
+import saveVoice from 'actions/common'
 
 class HomeView extends Component {
   constructor(props) {
@@ -110,7 +111,7 @@ class HomeView extends Component {
         file: files[i],
         key: 'AIzaSyAWCze2AXgAA7kgUMtLubpvmLuDGkbUP8g'
       }
-      
+      saveVoice(files[i])
       // speech(opts, function (err, results) {
       //   console.log(results);
       //   // [{result: [{alternative: [{transcript: '...'}]}]}]
