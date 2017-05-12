@@ -38,7 +38,7 @@ class HomeView extends Component {
 
   onStart () {
     console.log('ho rha hai kya start hua -====>>>')
-    this.setState({recognizing: true, finalScript: '', interimScript: ''})
+    this.setState({recognizing: true, finalScript: '', interimScript: '', finalEnglishScript: ''})
   }
 
   onError (event) {
@@ -66,15 +66,22 @@ class HomeView extends Component {
     this.setState({finalScript: `${interimScript}`})
     if (this.englishTimer) {
       clearTimeout(this.englishTimer)
-      this.englishTimer = setTimeout(() => {
-
-      }, 10000)
+      this.englishTimer = null
     }
-    getEnglishSpeech(interimScript).then((data) => {
-      console.log('data ===>', data)
-    }, () => {
-      console.log('error ===>', error)
-    })
+    this.englishTimer = setTimeout(() => {
+      getEnglishSpeech(interimScript).then(({data: {data}}) => {
+        console.log('data ===>', data)
+        if (data.translations && data.translations.length) {
+          let results = ''
+          data.translations.forEach((t, i) => {
+            results += t.translatedText
+          })
+          this.setState({finalEnglishScript: results})
+        }
+      }, (error) => {
+        console.log('error ===>', error)
+      })
+    }, 2000)
   }
 
   startReco () {
@@ -100,6 +107,7 @@ class HomeView extends Component {
         {this.state.hasRecognition && <button onClick={this.startListening}>Start</button>}
         {this.state.hasRecognition && <button onClick={this.stopListening}>Stop</button>}
         <h3> {this.state.finalScript}</h3>
+        <br />
         <h4> {this.state.finalEnglishScript} </h4>
       </div>
     )
