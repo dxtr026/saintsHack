@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
+import SummaryBot from 'utils/summary-bot'
 import getEnglishSpeech from 'actions/getEnglishSpeech'
-import SummaryBot from 'summary-bot'
+import getSummary from 'actions/getSummary'
 
 class HomeView extends Component {
   constructor(props) {
@@ -20,6 +21,7 @@ class HomeView extends Component {
     this.onResult = this.onResult.bind(this)
     this.startListening = this.startListening.bind(this)
     this.stopListening = this.stopListening.bind(this)
+    this.createSummary = this.createSummary.bind(this)
     this.englishTimer = null
   }
 
@@ -55,10 +57,24 @@ class HomeView extends Component {
     this.setState({recognizing: false})
   }
 
-  createSummary (article) {
-    const summ = Summary(article, 20)
-    console.log('Summary ---<>>>>', summ)
-    this.setState({summary: summ.text})
+  createSummary (response) {
+    if (response && response.data && response.data.summary) {
+      this.setState({summary: response.data.summary})
+    }
+  }
+
+  getLanguageResults (interimScript, lng = 'en') {
+    return getEnglishSpeech(interimScript, lng).then(({data: {data}}) => {
+      if (data.translations && data.translations.length) {
+        let results = ''
+        data.translations.forEach((t, i) => {
+          results += t.translatedText
+        })
+        return results
+      }
+    }, (error) => {
+      console.log('error ===>', error)
+    })
   }
 
   onResult (event) {
@@ -80,17 +96,14 @@ class HomeView extends Component {
       this.englishTimer = null
     }
     this.englishTimer = setTimeout(() => {
-      getEnglishSpeech(interimScript).then(({data: {data}}) => {
-        if (data.translations && data.translations.length) {
-          let results = ''
-          data.translations.forEach((t, i) => {
-            results += t.translatedText
-          })
-          this.setState({finalEnglishScript: results})
-          this.createSummary(results)
-        }
-      }, (error) => {
-        console.log('error ===>', error)
+      this.getLanguageResults(interimScript).then((results) => {
+        this.setState({finalEnglishScript: results})
+        getSummary(results).then(this.createSummary)
+      })
+      this.getLanguageResults(interimScript, 'hi').then((results) => {
+        this.getLanguageResults(results).then((res) => {
+          console.log('english to hindi to english', res)          
+        })
       })
     }, 2000)
   }
