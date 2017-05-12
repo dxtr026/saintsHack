@@ -1,0 +1,108 @@
+@import 'base';
+@import 'prefixer';
+
+$bannerHeight : 60px;
+
+body.appbs{
+	#app-banner{
+		display: block;
+	}
+
+	#app-root{
+		position: relative;
+		top: $bannerHeight;
+	}
+
+	.header-header {
+		top : $bannerHeight;
+		&.hide-header {
+		  @include transform(translateY(-$bannerHeight));
+		}
+	}
+	.shell {
+		.left-section {
+			top : $bannerHeight;
+		}
+		.shell-header {
+			top: 65px;  //change whenever changing $bannerHeight
+		}
+	}
+	.search-container .tabs {
+		top: 110px;   //change whenever changing $bannerHeight
+
+		&.hide-tabs {
+		  @include transform(translateY(-$bannerHeight));
+		}
+	}
+
+	&.home-page{
+		.shell .shell-header {
+			z-index: 11;
+		}
+	}
+
+	.modal-header {
+		top: $bannerHeight;
+	}
+}
+
+#app-banner{
+	padding: 5px 0 5px 0;
+	position: fixed;
+	width: 100%;
+	top: 0;
+	background: white;
+	.app-logo{
+		background-image: url('../../../assets/images/logo-small.png');
+		background-size: contain;
+		width: 40px;
+		height: 40px;
+		margin: 5px auto 5px auto;
+		border-radius: 5px;
+	}
+
+	.link{
+		width: 90%;
+	}
+
+	.middle{
+		line-height: 50px;
+		text-align: center;
+	}
+
+	.close{
+		width: 10%;
+		font-size: 12px;
+	}
+
+	.app-logo-cont{
+		width: 12%;
+		min-width: 40px;
+		height: 50px;
+		text-align: center;
+	}
+
+	.app-heading{
+		line-height: 25px;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.app-free{
+		font-size: 12px;
+		color: $white60;
+	}
+
+	.app-view{
+		color: $secondary;
+		width: 14%;
+		font-size: 16px;
+	}
+
+	.app-content{
+		margin-top: 3px;
+		margin-left: 10px;
+		width: 68%;
+	}
+}

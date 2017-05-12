@@ -1,0 +1,11 @@
+- name: "new_projects"
+  keys:
+  - "new_projects.caches.featured_builders.updated"
+  - "new_projects.caches.featured_projects.updated"
+  - "new_projects.home_page_data.updated"
+- name: "housing.rails"
+  keys:
+  - "housing.rails.cache.*"
+- name: "housing.cc"
+  keys:
+  - "housing.cc.cache.experiments"

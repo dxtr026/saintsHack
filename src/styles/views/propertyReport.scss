@@ -1,0 +1,110 @@
+@import 'prefixer';
+@import 'base';
+@import 'components/footerCard';
+
+.pr-container {
+  .report-page{
+    background-color: #f4f4f4;
+    padding-top: 50px;
+  }
+
+  .card{
+    background-color: white;
+    padding: 20px;
+    margin: 16px;
+    border-radius: 3px;
+  }
+
+  .address{
+    padding: 20px;
+  }
+  .label{
+    text-transform: uppercase;
+    color: #717171;
+    line-height: 20px;
+  }
+  .property-address{
+    font-size: 16px;
+    line-height: 22px;
+    padding-top: 5px;
+  }
+
+  .estimate_card{
+    .header{
+      border-bottom: 1px solid #e6e6e6;
+      position: relative;
+    }
+    .price{
+      font-size: 28px;
+      font-weight: 600;
+      text-align: center;
+      padding: 20px;
+      border: 1px solid $primary;
+      color: $primary;
+      .icon-rupee {
+        margin-right: 3px;
+      }
+    }
+    .label{
+      position: absolute;
+      background-color: #fff;
+      padding: 0 5px;
+      top: 11px;
+      right: 0;
+      left: 0;
+      width: 200px;
+      margin: auto;
+    }
+  }
+
+  .list_property_card{
+    margin-top: 20px;
+    .lyp-btn {
+      margin-top: 12px;
+      @include btn($primary, 44px, 14px, 100%);
+    }
+  }
+  .disclaimer{
+    color : #717171;
+    padding-top: 20px;
+    font-size: 12px;
+    .price-disclaimer {
+      color: $primary;
+      .icon-rupee {
+        margin: 0 3px;
+      }
+    }
+  }
+}
+
+.prop-details{
+  text-align: left;
+  font-size: 14px;
+  padding: 0 20px;
+  .tag{
+    border: 1px solid $black60;
+    border-radius: 18px;
+    font-size: 12px;
+    padding: 0 9px;
+    height: 25px;
+    line-height: 24px;
+    margin: 4px;
+    display: inline-block;
+    text-align: center;
+    color: $black60;
+  }
+}
+
+.pr-loading-state {
+  text-align: center;
+  .loader{
+    height: 100px;
+    padding: 20px;
+    background-color: $white;
+    background-image: url(../../../assets/images/apex-loading.gif);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    margin-top: 100px;
+  }
+}

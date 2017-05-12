@@ -1,0 +1,11 @@
+pkgs:
+  - nodejs-alt
+  - libjpeg-turbo
+  - libwebp-tools
+  - fontconfig 
+  - freetype
+
+build_pkgs:
+  - nodejs-alt
+  - libjpeg-turbo-devel
+  - libwebp-tools

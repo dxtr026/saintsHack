@@ -1,0 +1,109 @@
+import React, { Component } from 'react'
+import getEnglishSpeech from 'actions/getEnglishSpeech'
+
+class HomeView extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      recognizing: false,
+      ignoreOnend: false,
+      finalScript: '',
+      hasRecognition: false
+    }
+    this.recognition = null
+    this.onStart = this.onStart.bind(this)
+    this.onError = this.onError.bind(this)
+    this.onEnd = this.onEnd.bind(this)
+    this.onResult = this.onResult.bind(this)
+    this.startListening = this.startListening.bind(this)
+    this.stopListening = this.stopListening.bind(this)
+    this.englishTimer = null
+  }
+
+  componentDidMount() {
+    this.startReco()
+  }
+
+  startListening () {
+    if (this.recognition) {
+      this.recognition.start()
+    }
+  }
+
+  stopListening () {
+    if (this.recognition) {
+      this.recognition.stop()
+    }
+  }
+
+  onStart () {
+    console.log('ho rha hai kya start hua -====>>>')
+    this.setState({recognizing: true, finalScript: '', interimScript: ''})
+  }
+
+  onError (event) {
+    console.log(event)
+    console.log('ho rha hai kya error --->>>')
+    this.setState({ignoreOnend: true})
+  }
+
+  onEnd (event) {
+    console.log('ho rha hai kya')
+    this.setState({recognizing: false})
+  }
+
+  onResult (event) {
+    let interimScript = ''
+    // let finalScript = this.state.finalScript
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      interimScript += event.results[i][0].transcript
+      // if (event.results[i].isFinal) {
+      // } else {
+        // interimScript += event.results[i][0].transcript
+      // }
+    }
+    // console.log(interimScript)
+    this.setState({finalScript: `${interimScript}`})
+    if (this.englishTimer) {
+      clearTimeout(this.englishTimer)
+      this.englishTimer = setTimeout(() => {
+
+      }, 10000)
+    }
+    getEnglishSpeech(interimScript).then((data) => {
+      console.log('data ===>', data)
+    }, () => {
+      console.log('error ===>', error)
+    })
+  }
+
+  startReco () {
+    if (!('webkitSpeechRecognition' in window)) {
+      alert('webkitSpeechRecognition not supported')
+      return
+    }
+    this.recognition = new webkitSpeechRecognition()
+    this.recognition.continuous = true
+    this.recognition.interimResults = true
+    this.recognition.lang = 'en-IN'
+    this.recognition.onstart = this.onStart
+    this.recognition.onstart = this.onStart
+    this.recognition.onerror = this.onError
+    this.recognition.onend = this.onEnd
+    this.recognition.onresult = this.onResult
+    this.setState({hasRecognition: true})
+  }
+
+  render () {
+    return (
+      <div>
+        {this.state.hasRecognition && <button onClick={this.startListening}>Start</button>}
+        {this.state.hasRecognition && <button onClick={this.stopListening}>Stop</button>}
+        <h3> {this.state.finalScript}</h3>
+        <h4> {this.state.finalEnglishScript} </h4>
+      </div>
+    )
+  }
+}
+
+export default HomeView

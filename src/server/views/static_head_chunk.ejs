@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv = 'Content-type' content = 'text/plain; charset=x-user-defined'/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, minimum-scale=1"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="purple-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="preload" href="<%- assets.manifest.js %>" as="script">
+    <link rel="preload" href="<%- assets.vendor.js %>" as="script">
+    <link rel="preload" href="<%- assets.app.js %>" as="script">
+    <%if(chunkJS){%>
+      <link rel="preload" href="<%- assets[chunkname].js %>" as="script">
+    <%}%>
+    <% if (inlineAppCSs) { %>
+      <style type="text/css" id="app-css"> <%- inlineAppCSs %> </style>
+    <% } else if (assets.app && assets.app.css) { %>
+      <link rel="stylesheet" type="text/css" href=<%- assets.app.css %> />
+    <% } %>
+    <% if (chunkname && stringifiedChunkCss) { %>
+      <style type="text/css" id="chunk-<%- chunkname %>"> <%- stringifiedChunkCss %> </style>
+    <% } else if (chunkname && assets[chunkname] && assets[chunkname].css) { %>
+      <link id="chunk-<%- chunkname %>" rel="stylesheet" type="text/css" href=<%- assets[chunkname].css %> />
+    <% } %>
+

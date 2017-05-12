@@ -1,0 +1,27 @@
+@import 'base';
+@import 'prefixer';
+@import 'vendor/normalize';
+
+.ib{
+  display: inline-block;
+  vertical-align: top;
+}
+.hide {
+  display: none !important;
+}
+
+div, a{
+  @include box-sizing(border-box);
+}
+
+img, a{
+  border:none;
+  outline: none;
+}
+
+select{
+  background: transparent;
+  border: none;
+  -webkit-appearance:none;
+  appearance: none;
+}

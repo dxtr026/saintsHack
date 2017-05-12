@@ -1,0 +1,202 @@
+importScripts('sw-toolbox.js')
+
+var date = <%= Date.now() %>;
+var commonCache = <%- locals.commonCache %>;
+var jsToCache = <%- locals.jsToCache %>;
+var cssToCache = <%- locals.cssToCache %>;
+var staticCache = [];
+var precaches = Array.prototype.concat.apply([],
+  [
+    staticCache, jsToCache, cssToCache, commonCache
+  ]
+);
+
+toolbox.options.cache = {
+  name : 'nomad-cache',
+  maxEntries: 100,
+  maxAgeSeconds: 60*60*24*30 // 30 days
+}
+toolbox.options.debug = false;
+
+self.addEventListener('install', function(event) {
+  if(typeof(self.skipWaiting)==='function'){
+    event.waitUntil(self.skipWaiting())
+  }
+});
+
+self.addEventListener('activate', function(event) {
+  event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener('message', function(event) {
+  if (event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
+});
+
+toolbox.precache(precaches);
+
+// toolbox.router.get('(.*).js', toolbox.fastest,  {
+//   origin: /.housingcdn.com/,
+//   mode: 'cors',
+//   cache : {
+//     name: 'js-assets',
+//     maxEntries: 50,
+//     maxAgeSeconds: 60*60*24*30 // 30 days
+//   }
+// });
+
+// toolbox.router.get('(.*).css', toolbox.fastest, {
+//   origin: /.housingcdn.com/,
+//   mode : 'cors',
+//   cache: {
+//     name: 'css-assets',
+//     maxEntries: 50,
+//     maxAgeSeconds: 60*60*24*30 // 30 days
+//   }
+// });
+
+// toolbox.router.get('(.*).jpg', toolbox.cacheFirst, {
+//     origin : /.housingcdn.com/,
+//     mode   : 'cors',
+//     cache  : {
+//       name          : 'cdnImage-assets-jpg',
+//       maxEntries    : 200,
+//       maxAgeSeconds : 60*60*24*15 // 15 days
+//   }
+// })
+
+// toolbox.router.get('(.*).png', toolbox.cacheFirst, {
+//   origin : /.housingcdn.com/,
+//   mode: 'cors',
+//   cache: {
+//     name : 'cdnImage-assets-png',
+//     maxEntries : 200,
+//     maxAgeSeconds : 60*60*24*15 // 15 days
+//   }
+// })
+
+toolbox.router.get('(.*)', function(request, values, options) {
+  return toolbox.fastest(request, values, options).catch(function(error) {
+    if (request.method === 'GET' && request.headers.get('accept').includes('text/html')) {
+      var OfflineRequest = new Request('/offline', {credentials: 'include', mode: 'no-cors'})
+      return caches.match(OfflineRequest)
+        .then(function(response){
+          return response
+        })
+    }
+    throw error;
+  });
+}, {
+  origin : *,
+  cache: {
+    name: 'content-cache',
+    maxEntries: 200,
+    maxAgeSeconds: 60*60*24*30 // 30 days
+  }
+});
+
+// toolbox.router.get('/api/*', toolbox.networkFirst, {
+//   origin: /rails.housing.com/,
+//   mode: 'cors',
+//   cache: {
+//     name: 'api-rails',
+//     maxEntries: 60,
+//     maxAgeSeconds: 60*60*24*30 // 30 days
+//   }
+// })
+
+self.addEventListener('push', function(event) {
+  var data = false;
+  var title = false;
+  var body = false;
+  var icon = 'https://housing.com/mini_logo_new.png';
+  var tag = 'notification'
+  try {
+    data = event.data.json();
+    title = data.heading;
+    body = data.body;
+    if(data.img){
+      icon = data.img
+    }
+    if(body.notification_tag){
+      tag = data.notification_tag
+    }
+  }catch(e){
+
+  }
+  if(title && body){
+    event.waitUntil(
+      self.registration.showNotification(title, {
+        type : 'basic',
+        body: body,
+        icon: icon,
+        tag: tag,
+        data: data,
+        sticky: true
+      })
+    );
+  } else {
+
+  }
+});
+
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+
+  if(!!event.action && event.action == 'close'){
+    return
+  }
+  var data = event.notification.data;
+  if(data.link_primary){
+    var url = data.link_primary
+    if(url.indexOf('?')!=-1){
+      url += '&utm_medium=mobile&utm_source=web_notification&utm_campaign='+(data.notification_type||"push")
+    }else{
+      url += '?utm_medium=mobile&utm_source=web_notification&utm_campaign='+(data.notification_type||"push")
+    }
+  }else{
+    return
+  }
+  // This looks to see if the current is already open and
+  // focuses if it is
+  event.waitUntil(
+    clients.openWindow(url)
+  );
+});
+
+
+self.addEventListener('pushsubscriptionchange', function(event) {
+  event.waitUntil(
+    self.registration.pushManager.subscribe({ userVisibleOnly: true })
+    .then(function(subscription) {
+      var endpoint = subscription.endpoint.replace('https://android.googleapis.com/gcm/send/', '')
+      var web_encryption_key = '';
+      var web_auth = '';
+      try{
+        keys = JSON.parse(pushSubscription).keys
+        web_encryption_key = keys.p256dh;
+        web_auth = keys.auth;
+      }catch(err){
+      }
+      return fetch('https://notification.housing.com/api/v0/login-guest-device', {
+        method: 'post',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: {
+          reg_id: endpoint,
+          app_name: 'web.housing.com',
+          app_version: '1',
+          web_encryption_key: web_encryption_key,
+          web_auth: web_auth,
+          is_subscribed: true
+        }
+      });
+    })
+  );
+});
+
+
+
+

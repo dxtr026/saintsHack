@@ -1,0 +1,21 @@
+language: node_js
+
+node_js:
+  - "0.10.4"
+
+branches:
+  only:
+    - master
+
+cache:
+  directories:
+    - node_modules
+
+install:
+  - npm install
+
+before_install:
+  - cp config/application.yml.sample config/application.yml
+
+script:
+  - NODE_ENV=production sh build.sh

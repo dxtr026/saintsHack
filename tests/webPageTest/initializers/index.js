@@ -1,0 +1,2 @@
+require('./githubConnect');
+require('./aws');

@@ -1,0 +1,125 @@
+@import 'base';
+@import 'components/collections';
+@import 'components/topLocalities';
+@import 'components/commonComponents/fullWidthCard';
+@import 'components/footerCard';
+@import 'components/commonComponents/seedElement';
+@import 'components/commonComponents/carousel';
+@import 'components/home/citySelect';
+
+.header-logo {
+  display: block;
+  text-align: center;
+  width: 100%;
+  background-color: rgba(0,0,0,0);
+  position: relative;
+  z-index: 1;
+  .housing-logo {
+    width: 140px;
+    height: 50px;
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+.search-box-container {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  .title {
+    display: inline-block;
+    font-size: 30px;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  .city-select {
+    font-size: 20px;
+    color: $white;
+    margin-bottom: 24px;
+    height: 26px;
+    .icon-arrow-down {
+      font-size: 16px;
+    }
+  }
+  .dummy-nearby {
+    max-width: 80%;
+    width: 100%;
+    background-color: #fff;
+    display: inline-block;
+    text-align: left;
+    height: 44px;
+    line-height: 44px;
+    font-size: 14px;
+    padding: 0 0 0 15px;
+    border-radius:2px;
+    will-change: transform;
+    @include transform(translateY(0) translateZ(0));
+    @include transition(all 0.2s ease-out);
+    &.move-sb {
+      max-width : 100%;
+      @include transform(translateY(-147px));
+    }
+    .text {
+      color: #7f7f7f;
+    }
+    .default-text {
+      padding: 0 0 0 10px;
+    }
+  }
+}
+
+.search-header {
+  background-color: #673acc;
+  height: 250px;
+  padding-top: 80px;
+  position: relative;
+  margin-top: -50px;
+  background-size: cover;
+  background-repeat : no-repeat;
+  background-position: center;
+
+  &:before{
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.2);
+    z-index: 0;
+  }
+}
+.card-content {
+  padding: 0 10px 25px 10px;
+  background-color: #f4f4f4;
+  .card-holder {
+    padding-top: 32px;
+  }
+  .card-title {
+    margin-bottom: 14px;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.home-seed-container {
+  padding: 12px 12px 0;
+  background-color: $white95;
+  .seed-elem-container {
+    border-bottom: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+    overflow: hidden;
+    &:last-of-type{
+      margin-bottom: 0;
+    }
+  }
+}
+
+.recent-search{
+  .icon-last-search{
+    font-size: 60px;
+    color: $tertiary;
+  }
+}

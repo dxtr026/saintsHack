@@ -1,0 +1,119 @@
+// Settings go here
+@mixin box-sizing($value){
+  -webkit-box-sizing: $value;
+  -moz-box-sizing: $value;
+  box-sizing: $value;
+}
+
+@mixin box-shadow($value){
+  -webkit-box-shadow: $value;
+  -moz-box-shadow: $value;
+  box-shadow: $value;
+}
+
+@mixin border-radius($value){
+  -moz-border-radius: $value;
+  -webkit-border-radius: $value;
+  border-radius: $value;
+}
+
+@mixin background-size($value){
+  -o-background-size: $value;
+  -webkit-background-size: $value;
+  -moz-background-size: $value;
+  background-size: $value;
+}
+
+@mixin transition($value) {
+  -webkit-transition: $value;
+  transition: $value;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+}
+@mixin transition-transform($transition) {
+  -webkit-transition: -webkit-transform $transition;
+  -moz-transition: -moz-transform $transition;
+  -o-transition: -o-transform $transition;
+  transition: transform $transition;
+}
+@mixin transition-delay($transition-delay) {
+  -webkit-transition-delay: $transition-delay;
+          transition-delay: $transition-delay;
+}
+
+@mixin transform($value) {
+  -o-transform: $value;
+  -ms-transform: $value;
+  -webkit-transform: $value;
+  transform: $value;
+}
+@mixin transform-origin($args){
+  -webkit-transform-origin: $args;
+  -moz-transform-origin: $args;
+  -ms-transform-origin: $args;
+  -o-transform-origin: $args;
+  transform-origin: $args;
+}
+
+@mixin scale($ratio) {
+  -webkit-transform: scale($ratio);
+      -ms-transform: scale($ratio); // IE9 only
+       -o-transform: scale($ratio);
+          transform: scale($ratio);
+}
+
+@mixin down-arrow($width: 9px, $frontcolor: #fff, $backcolor: #d6d6d6){
+  position: relative;
+
+  &:before, &:after{
+    content: '';
+    border: solid transparent;
+    position: absolute;
+    top: -2*$width + 2px;
+    left: -$width + 1px;
+  }
+  &:before{
+    border-width: $width;
+    border-bottom-color: $backcolor;
+    margin: -2px 0 0 -1px;
+  }
+  &:after{
+    border-width: $width - 1px;
+    border-bottom-color: $frontcolor;
+  }
+}
+@mixin text-overflow() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin btn($color: #e6e6e6, $height: auto, $font: 14px, $width: auto, $background: #fff){
+  display: inline-block;
+  height: $height;
+  width: $width;
+  line-height: $height;
+  outline: 0;
+  padding: 0 15px;
+  text-align: center;
+  white-space: nowrap;
+  font-size: $font;
+  border-radius: 2px;
+  border: 1px solid $color;
+  background: $color;
+  color: #fff;
+  @include transition(.2s);
+  @include box-sizing(border-box);
+  @include text-overflow();
+  &.bordered {
+    color: $color;
+    background: $background;
+  }
+}
+
+@mixin background-image-ret($normal, $hdr) {
+  background-image: url($normal);
+  @media (-webkit-min-device-pixel-ratio: 1.5), (min--moz-device-pixel-ratio: 1.5), (-o-min-device-pixel-ratio: 1.5/1), (min-device-pixel-ratio: 1.5), (min-resolution: 144dpi), (min-resolution: 1.5dppx){
+    background-image: url($hdr);
+  }
+}

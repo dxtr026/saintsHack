@@ -1,0 +1,132 @@
+@import 'base';
+@import 'prefixer';
+@import 'components/listComponent';
+@import 'components/verticalList';
+@import 'components/saveSearch';
+@import 'components/vouchers/voucherEntryPoint';
+@import 'components/commonComponents/seedElement';
+// @import 'components/localitySelect'; // no need of this here it is already coming as its included in the view, something weird happening here
+
+.search-container{
+  padding-top: 40px;
+  .tabs{
+    overflow: hidden;
+    position: fixed;
+    background: #fff;
+    height: 40px;
+    width: 101%;
+    z-index: 20;
+    top: 50px;
+    border-bottom: 1px solid $white90;
+    box-shadow: 0 1px 5px 0px #e6e6e6;
+    @include transition(transform 0.2s linear);
+    will-change: transform;
+    >div:last-child {
+      border: none;
+    }
+    &.hide-tabs {
+      @include transform(translateY(-50px));
+    }
+  }
+  .tab {
+    position: relative;
+    cursor: pointer;
+    line-height: 40px;
+    width: 33%;
+    font-size: 12px;
+    font-weight: 500;
+    float: left;
+    text-align: center;
+    border-bottom: $white90;
+    color: $primary;
+    text-transform: uppercase;
+    text-align: center;
+    border-right: 1px solid $white90;
+    .icon {
+      margin-right: 5px;
+    }
+    .icon-arrow-down {
+      position: absolute;
+      top: 0;
+      right: 6px;
+      line-height: 44px;
+      font-size: 9px;
+    }
+    .select-filter {
+      width: 90%;
+      @include text-overflow();
+    }
+  }
+  .image-section {
+    > div{
+      background-color: whitesmoke;
+      &.no-img{
+        background-image: url(../../../assets/images/loading_placeholder.png);
+      }
+    }
+  }
+}
+
+.result-count{
+  padding: 3px 10px;
+  line-height: 32px;
+  font-size: 14px;
+  margin-top: 50px;
+  background-color: #f4f4f4;
+}
+.no-result-count{
+  text-align: center;
+  padding: 50% 0;
+}
+
+.no-results{
+  margin-top: 140px;
+  width: 100%;
+  background: url(../../../assets/images/no_results.png) no-repeat center;
+  height: 300px;
+  background-size: 100% auto;
+
+  .message{
+    line-height: 18px;
+    text-align: center;
+    font-size: 16px;
+    color:grey;
+    .nr-heading{
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+  }
+
+  .btn{
+    background-color: $primary;
+    line-height: 36px;
+    display: table;
+    padding: 0 15px;
+    border-radius: 2px;
+    color: white;
+    margin: 40px auto;
+    position: relative;
+    font-size: 12px;
+  }
+}
+
+.loading-list{
+  display: table;
+  padding: 15px;
+  margin: 0 auto;
+  .loading-list-icon{
+    background-image: url(../../../assets/images/scroll-loader.gif);
+    background-position: center;
+    background-size: cover;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+}
+
+.results-loading{
+  position: relative;
+  top: 60px;
+}

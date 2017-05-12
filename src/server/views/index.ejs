@@ -1,0 +1,20 @@
+<% locals.layout = 'main' %>
+<% if (!static_chunk_sent) { %>
+  <%- render('head_static_chunk', locals) %>
+<% } %>
+  <title>Meeting notes</title>
+</head>
+<body>
+  <div id="app-root" class="layer-10"><%- markup %></div>
+  <script>
+    var isBackendPrinted = true;var __INITIAL_STATE__ = <%- initialState %>;
+    var assetPaths = <%- JSON.stringify(cssAssetPaths) %>;var cdnHost = <%- JSON.stringify(cdnHost) %>;
+    if (typeof(Promise)==='undefined'){(function(_,e,rr){var c=e.createElement(rr),b=e.getElementsByTagName(rr)[0];c.src="https://cdnjs.cloudflare.com/ajax/libs/es6-promise/3.2.2/es6-promise.min.js";c.async=!0;b.parentNode.insertBefore(c,b)})(window,document,"script");}
+    var script_array = ["<%- assets.manifest.js %>", "<%- assets.vendor.js %>","<%- assets.app.js %>"];if("<%- hasChunk %>"){script_array = script_array.concat((<%- chunkJS %>))};
+    !function(e,t,r){function n(){for(;d[0]&&"loaded"==d[0][f];)c=d.shift(),c[o]=!i.parentNode.insertBefore(c,i)}for(var s,a,c,d=[],i=e.scripts[0],o="onreadystatechange",f="readyState";s=r.shift();)a=e.createElement(t),"async"in i?(a.async=!1,e.head.appendChild(a)):i[f]?(d.push(a),a[o]=n):e.write("<"+t+' src="'+s+'" defer></'+t+">"),a.src=s}(document,"script",script_array);
+  </script>
+  <% if (env != 'production') {%>
+    <script src=""></script>
+  <% }%>
+</body>
+</html>

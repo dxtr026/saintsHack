@@ -1,0 +1,100 @@
+@import 'base';
+@import 'prefixer';
+
+#oc{
+	background-image: url(../../../assets/images/splash_pattern.jpg);
+	background-size: cover;
+	background-position: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 99999;
+	opacity: 1;
+	-webkit-animation: fadeInCont 1.2s linear 1 forwards;
+	animation: fadeInCont 1.2s linear 1 forwards;
+	text-align: center;
+
+	.oc-inner{
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		margin: auto;
+		left: 0;
+		right: 0;
+		width: 100px;
+		height: 80px;
+		transform: scale(1);
+		vertical-align: middle;
+		-webkit-animation: fadeIn 1.2s linear 1 forwards;
+		animation: fadeIn 1.2s linear 1 forwards;
+		transform-origin: 50% 37%;
+	}
+
+	&.is-paused{
+		-webkit-animation-play-state: paused;
+		animation-play-state: paused;
+		.oc-inner{
+			-webkit-animation-play-state: paused;
+			animation-play-state: paused;
+		}
+	}
+}
+
+@keyframes fadeInCont {
+	50% {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+@keyframes fadeIn {
+	50% {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+		transform: scale(30);
+	}
+}
+
+.oc-inner{
+	background-image: url(../../../assets/images/housing_logo.png);
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+}
+
+
+body.offline{
+  .header-tag{
+    &.selected{
+      background-color: #444;
+    }
+  }
+
+  .tag{
+    &.selected{
+      color: $white;
+      border: 1px solid #444;
+    }
+  }
+}
+
+.show-more-filters {
+  margin-bottom: 50px;
+  text-align: center;
+  .icon-arrow-down {
+    margin-left: 3px;
+    font-size: 10px;
+  }
+}
+
+body.offline{
+  .modal-header, .header-header {
+    background-color: grey;
+  }
+}
+
