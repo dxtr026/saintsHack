@@ -8,6 +8,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/server'
 import {Provider} from 'react-redux'
 import { createMemoryHistory } from 'history'
+import fileUpload from 'express-fileupload'
 
 import {match, RouterContext} from 'react-router'
 import {createInlineCss, cssAssetPaths} from '../utils/inlineCss'
@@ -22,6 +23,8 @@ import cleanUrl from './middlewares/cleanUrl'
 import https from 'https'
 import fs from 'fs'
 import path from 'path'
+
+import recoSpeech from 'server/helper/speech'
 
 import warmRequire from 'utils/warmRequire'
 
@@ -59,6 +62,7 @@ app.disable('x-powered-by')
 app.use(cookieParser())
 app.use(useragent.express())
 app.use(cleanUrl)
+app.use(fileUpload())
 
 app.listen(process.env.PORT || 4000, () => console.log(`[info] Sun raha hu main ${process.env.PORT || 4000} par`))
 
@@ -94,6 +98,27 @@ if (process.env.NODE_ENV !== 'production') {
     next()
   })
 }
+
+
+app.post('/upload', (req, res, next) => {
+
+})
+
+// app.use((req, res, next) => {
+//  if(req.url === '/upload'){
+//      google_speech.ASR({
+//        developer_key: 'AIzaSyCl0Czr9FhSgodO5yAqtPxZq4nOiN5v0_Q',
+//        file: 'speech.mp3',
+//      }, function(err, httpResponse, xml){
+//        if(err){
+//            console.log('failed again... : ',err);
+//          }else{
+//            console.log(httpResponse.statusCode, xml)
+//          }
+//        }
+//    );
+//  }
+// })
 
 app.use((req, res, next) => {
   match({
