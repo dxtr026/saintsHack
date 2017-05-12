@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import getEnglishSpeech from 'actions/getEnglishSpeech'
+import SummaryBot from 'summary-bot'
 
 class HomeView extends Component {
   constructor(props) {
@@ -8,8 +9,10 @@ class HomeView extends Component {
       recognizing: false,
       ignoreOnend: false,
       finalScript: '',
-      hasRecognition: false
+      hasRecognition: false,
+      summary: ''
     }
+    this.speechParts = []
     this.recognition = null
     this.onStart = this.onStart.bind(this)
     this.onError = this.onError.bind(this)
@@ -52,6 +55,12 @@ class HomeView extends Component {
     this.setState({recognizing: false})
   }
 
+  createSummary (article) {
+    const summ = Summary(article, 20)
+    console.log('Summary ---<>>>>', summ)
+    this.setState({summary: summ.text})
+  }
+
   onResult (event) {
     let interimScript = ''
     // let finalScript = this.state.finalScript
@@ -63,6 +72,8 @@ class HomeView extends Component {
       // }
     }
     // console.log(interimScript)
+    this.speechParts.push(interimScript)
+    console.log('-->> parts', interimScript)
     this.setState({finalScript: `${interimScript}`})
     if (this.englishTimer) {
       clearTimeout(this.englishTimer)
@@ -70,13 +81,13 @@ class HomeView extends Component {
     }
     this.englishTimer = setTimeout(() => {
       getEnglishSpeech(interimScript).then(({data: {data}}) => {
-        console.log('data ===>', data)
         if (data.translations && data.translations.length) {
           let results = ''
           data.translations.forEach((t, i) => {
             results += t.translatedText
           })
           this.setState({finalEnglishScript: results})
+          this.createSummary(results)
         }
       }, (error) => {
         console.log('error ===>', error)
@@ -106,9 +117,14 @@ class HomeView extends Component {
       <div>
         {this.state.hasRecognition && <button onClick={this.startListening}>Start</button>}
         {this.state.hasRecognition && <button onClick={this.stopListening}>Stop</button>}
+        <h2> Original Text </h2>
         <h3> {this.state.finalScript}</h3>
         <br />
+        <h2>English Translation</h2>
         <h4> {this.state.finalEnglishScript} </h4>
+        <br />
+        <h2> Summary from our Bot </h2>
+        <h4> {this.state.summary} </h4>
       </div>
     )
   }

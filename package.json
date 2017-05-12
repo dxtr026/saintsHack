@@ -101,6 +101,7 @@
     "request": "*",
     "sass-loader": "^3.0.0",
     "style-loader": "^0.13.0",
+    "summary-bot": "^1.0.1",
     "sw-toolbox": "^3.2.1",
     "twilio": "^3.0.0",
     "twilio-video": "^1.0.0",
