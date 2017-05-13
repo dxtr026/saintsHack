@@ -99,38 +99,38 @@ if (process.env.NODE_ENV !== 'production') {
   })
 }
 
-app.use((req, res, next) => {
-  // console.log('req.url : ',req)
-  if(req.url === '/upload'){
-      google_speech.ASR({
-        developer_key: 'AIzaSyAWCze2AXgAA7kgUMtLubpvmLuDGkbUP8g',
-        file: 'speech.mp3',
-      }, function(err, httpResponse, xml){
-        if(err){
-            console.log('failed again... : ',err);
-          }else{
-            console.log(httpResponse.statusCode, xml)
-          }
-        }
-    );
+// app.use((req, res, next) => {
+//   // console.log('req.url : ',req)
+//   if(req.url === '/upload'){
+//       google_speech.ASR({
+//         developer_key: 'AIzaSyAWCze2AXgAA7kgUMtLubpvmLuDGkbUP8g',
+//         file: 'speech.mp3',
+//       }, function(err, httpResponse, xml){
+//         if(err){
+//             console.log('failed again... : ',err);
+//           }else{
+//             console.log(httpResponse.statusCode, xml)
+//           }
+//         }
+//     );
 
 
 
-    // var opts = {
-    //   file: 'speech.mp3',
-    //   key: 'AIzaSyAWCze2AXgAA7kgUMtLubpvmLuDGkbUP8g'
-    // }
-    // console.log('test : ',opts)
-    // speech(opts, function (err, results) {
-    //   console.log('err : ',err)
-    //   // [{result: [{alternative: [{transcript: '...'}]}]}]
-    //   res.end(JSON.stringify(results))
-    //   return
-    // })
-    // res.end('asdf')
-    // return
-  }
-})
+//     // var opts = {
+//     //   file: 'speech.mp3',
+//     //   key: 'AIzaSyAWCze2AXgAA7kgUMtLubpvmLuDGkbUP8g'
+//     // }
+//     // console.log('test : ',opts)
+//     // speech(opts, function (err, results) {
+//     //   console.log('err : ',err)
+//     //   // [{result: [{alternative: [{transcript: '...'}]}]}]
+//     //   res.end(JSON.stringify(results))
+//     //   return
+//     // })
+//     // res.end('asdf')
+//     // return
+//   }
+// })
 
 
 app.use((req, res, next) => {
