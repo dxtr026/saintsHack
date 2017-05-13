@@ -10,7 +10,7 @@ import HighLight from 'react-highlight'
 //   }
 // }
 
-const createConfig = (data, fileName) => {
+const createConfig = (data, fileName = 'ravi_joshi.ogg') => {
   // debugger
   const series = []
   const categories = []
