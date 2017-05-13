@@ -4,6 +4,7 @@ import saveVoice from 'actions/common'
 import SummaryBot from 'utils/summary-bot'
 import getEnglishSpeech from 'actions/getEnglishSpeech'
 import getSummary from 'actions/getSummary'
+// import Waveform from 'react-waveform'
 
 class HomeView extends Component {
   constructor(props) {
@@ -13,7 +14,8 @@ class HomeView extends Component {
       ignoreOnend: false,
       finalScript: '',
       hasRecognition: false,
-      summary: ''
+      summary: '',
+      buffer: null
     }
     this.speechParts = []
     this.recognition = null
@@ -128,7 +130,7 @@ class HomeView extends Component {
     this.setState({hasRecognition: true})
   }
 
-  onDrop (files) {
+  onDrop (files, e) {
     for(let i=0;i<=files.length;i++){
       const opts = {
         file: files[i],

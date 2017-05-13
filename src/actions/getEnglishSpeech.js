@@ -1,8 +1,7 @@
 import axios from 'axios'
 
 const getEnglish = (finalString, target = 'en') => {
-  const newString = finalString.removeStopWords()
-  console.log('newString : ',newString)
+ 
   return axios({
   	url: `http://translate.googleapis.com/translate_a/single?client=gtx&sl=hi&tl=en&dt=t&q=${encodeURIComponent(finalString)}&ie=UTF-8&oe=UTF-8`,
     // url: `https://translation.googleapis.com/language/translate/v2?key=AIzaSyAWCze2AXgAA7kgUMtLubpvmLuDGkbUP8g&target=${target}&q=${finalString}&model=base`,

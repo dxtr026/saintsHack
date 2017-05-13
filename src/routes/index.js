@@ -76,6 +76,18 @@ export default (store) => (
       }}
     />
     <Route
+      chunkname='callView'
+      path='/call'
+      pageType='call-page'
+      getComponent={(nextState, cb) => {
+        require.ensure(['views/callView'], (require) => {
+          requireStyle('newHomeView').then(() => {
+            cb(null, require('views/callView').default)
+          })
+        }, 'callView')
+      }}
+    />
+    <Route
       chunkname='homeView'
       path='/:id'
       pageType='home-page'
