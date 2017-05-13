@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "text-validator": "^0.0.3",
+    "wordpos": "^1.1.2"
+  }
+}
