@@ -28,7 +28,7 @@ const createConfig = (data, fileName) => {
     }
 
     const config = {
-      title: `Sentiment Analysis for ${fileName}`,
+      title: `Sentiment Analysis for ${fileName} - ${data.overall_sentiment}`,
       xAxis: {
         categories: categories
       },
