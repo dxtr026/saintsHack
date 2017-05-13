@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Dropzone from 'react-dropzone'
-import saveVoice from 'actions/common'
+import saveVoice, {getFileData} from 'actions/common'
 import SummaryBot from 'utils/summary-bot'
 import getEnglishSpeech from 'actions/getEnglishSpeech'
 import getSummary, { getSentiment } from 'actions/getSummary'
@@ -32,6 +32,9 @@ class HomeView extends Component {
 
   componentDidMount () {
     this.startReco()
+    getFileData().then((data) => {
+      debugger
+    })
   }
 
   startListening () {
@@ -64,7 +67,7 @@ class HomeView extends Component {
 
   createSummary (response) {
     if (response && response.data && response.data.summary) {
-      this.setState({summary: response.data.summary})
+      this.setState({summary: response.data.summary2 || response.data.summary})
     }
   }
 

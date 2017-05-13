@@ -114,22 +114,23 @@ const getCmdPromise = (command) => {
   })
 }
 
-app.post('/upload', (req, res, next) => {
-  if (!req.files.file) { return res.status(400).send('No files were uploaded.') }
+app.get('/getFileData', (req, res, next) => {
+  // if (!req.files.file) { return res.status(400).send('No files were uploaded.') }
 
-  let file = req.files.file
+  // let file = req.files.file
+  const file = {name: 'ravi_joshi.ogg'}
   const fileName = file.name.split('.')[0]
-
-  file.mv(path.resolve(`./${file.name}`), (err) => {
-    if (err) { return res.status(500).send(err) }
-
-    const results = []
-    const starts = []
-    const ends = []
-    let transcript = ''
-    cmd.get('rm ./audioTmp/*', (err, data, stderr) => {
-      cmd.get(`./ffmpeg -i ./${file.name} -f mp3 ./audioTmp/output.mp3`, (err, data, stderr) => {
-        if (err) { return res.status(500).send(err) }
+  // const pathN = path.resolve(`./${file.name}`)
+  // debugger
+  // file.mv(path.resolve(`./${file.name}`), (err) => {
+  //   if (err) { return res.status(500).send(err) }
+  const results = []
+  const starts = []
+  const ends = []
+  let transcript = ''
+  cmd.get('rm ./audioTmp/*', (err, data, stderr) => {
+    cmd.get(`./ffmpeg -i ./${file.name} -f mp3 ./audioTmp/output.mp3`, (err, data, stderr) => {
+      if (err) { return res.status(500).send(err) }
 
         // cmd.get(`./ffmpeg -i ./audioTmp/output.mp3 -af silencedetect=noise=-30dB:d=0.5 -f null - 2> ./audioTmp/vol.txt; cat ./audioTmp/vol.txt | grep 'silence_start' > ./audioTmp/silence_start.txt; cat ./audioTmp/vol.txt | grep 'silence_end' > ./audioTmp/silence_end.txt; ./ffmpeg -i ./audioTmp/output.mp3 2>&1 | grep Duration | cut -d ' ' -f 4 | sed s/,// > ./audioTmp/duration.txt`, (err, data, stderr) => {
         //   const silenceStart = fs.readFileSync('./audioTmp/silence_start.txt').toString()
@@ -195,41 +196,41 @@ app.post('/upload', (req, res, next) => {
         //   })
         // })
 
-        cmd.get('./ffmpeg -i ./audioTmp/output.mp3 -f segment -segment_time 20 ./audioTmp/fileout%01d.flac', (err, data, stderr) => {
-          if (err) { return res.status(500).send(err) }
+      cmd.get('./ffmpeg -i ./audioTmp/output.mp3 -f segment -segment_time 20 ./audioTmp/fileout%01d.flac', (err, data, stderr) => {
+        if (err) { return res.status(500).send(err) }
 
-          fs.readdir('./audioTmp', (err, filenames) => {
-            if (err) {
-              return res.status(500).send(err)
+        fs.readdir('./audioTmp', (err, filenames) => {
+          if (err) {
+            return res.status(500).send(err)
+          }
+
+          const promiseArr = []
+          filenames.forEach((f) => {
+            if (f.indexOf('fileout') !== -1) {
+              promiseArr.push(recoSpeech(path.resolve(`./audioTmp/${f}`)))
             }
-
-            const promiseArr = []
-            filenames.forEach((f) => {
-              if (f.indexOf('fileout') !== -1) {
-                promiseArr.push(recoSpeech(path.resolve(`./audioTmp/${f}`)))
+          })
+          return Promise.all(promiseArr).then((datas) => {
+            datas.forEach((d) => {
+              if (d.name && d.transcription) {
+                results.push(d.transcription)
+                transcript += ` ${d.transcription}`
               }
             })
-            return Promise.all(promiseArr).then((datas) => {
-              datas.forEach((d) => {
-                if (d.name && d.transcription) {
-                  results.push(d.transcription)
-                  transcript += ` ${d.transcription}`
-                }
-              })
 
-              cmd.get('rm ./audioTmp/*', (err, data, stderr) => {
-                res.send({data: transcript, results})
-              })
+            cmd.get('rm ./audioTmp/*', (err, data, stderr) => {
+              res.send({data: transcript, results})
             })
           })
         })
       })
     })
+  })
 
     // recoSpeech(path.resolve(`./${file.name}`)).then((data) => {
     //   res.send({data});
     // })
-  })
+  // })
 })
 
 // app.use((req, res, next) => {

@@ -26,9 +26,10 @@ const createConfig = (data, fileName) => {
     function getTooltip () {
       return keys[this.index]
     }
-
     const config = {
-      title: `Sentiment Analysis for ${fileName} - ${data.overall_sentiment}`,
+      title: {
+        text: `Sentiment Analysis for ${fileName} - ${parseFloat(data.overall_probability).toFixed(3)}`
+      },
       xAxis: {
         categories: categories
       },
