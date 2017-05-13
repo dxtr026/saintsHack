@@ -5,9 +5,10 @@ import SummaryBot from 'utils/summary-bot'
 import getEnglishSpeech from 'actions/getEnglishSpeech'
 import getSummary, { getSentiment } from 'actions/getSummary'
 import { isValidSentence } from 'utils/grammar'
+import Graph from 'containers/sentimentGraph'
 
 class HomeView extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
     this.state = {
       recognizing: false,
@@ -29,7 +30,7 @@ class HomeView extends Component {
     this.englishTimer = null
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.startReco()
   }
 
@@ -94,7 +95,7 @@ class HomeView extends Component {
       // }
     }
     // console.log(interimScript)
-    if (!!interimScript) {
+    if (interimScript) {
       this.postFinalScript(interimScript)
     }
   }
@@ -132,35 +133,36 @@ class HomeView extends Component {
   }
 
   onDrop (files) {
-    for(let i=0;i<=files.length-1;i++){
-      if (files[i]) {
-        saveVoice(files[i]).then((res) => {
-          console.log('mp3 translated',res.data)
-          // const finalStr = ''
-          const finalStr = res.data.results.join('. ')
-          this.setState({finalScript: finalStr})  
-          this.postFinalScript(finalStr)
-          // const finalStr = res.data.data
-          let convertStr = []
-          const sentenceArr = []
-          res.data.results.forEach((r) => {
-            if (isValidSentence(r)) {
-              sentenceArr.push(this.getLanguageResults(r))
-            }
-          })
-          Promise.all(sentenceArr).then((ss) => {
-            ss.forEach((s) => {
-              convertStr.push(s)
-            })
-            this.setState({finalEnglishScript: convertStr.join('. ')})
-            getSentiment(convertStr.join('. ')).then(({data}) => {
-              console.log('sentiment data',data)
-            })
-          })
-        }, (err) => {
-          console.log('mp3 translated err',err)
+    if (files[0]) {
+      saveVoice(files[0]).then((res) => {
+        console.log('mp3 translated', res.data)
+        // const finalStr = ''
+        const finalStr = res.data.results.join('. ')
+        this.setState({finalScript: finalStr, fileName: files[0].name})
+        this.postFinalScript(finalStr)
+        // const finalStr = res.data.data
+        let convertStr = []
+        const sentenceArr = []
+        res.data.results.forEach((r) => {
+          sentenceArr.push(this.getLanguageResults(r))
         })
-      }
+        Promise.all(sentenceArr).then((ss) => {
+          ss.forEach((s) => {
+            convertStr.push(s)
+            // console.log('is valid or not', isValidSentence(r))
+            // if (isValidSentence(r)) {
+            // }
+          })
+          this.setState({finalEnglishScript: convertStr.join('. ')})
+          getSummary(convertStr.join('. ')).then(this.createSummary)
+          getSentiment(convertStr.join('. ')).then(({data}) => {
+            this.setState({sentimentData: data})
+            // console.log('sentiment data', data)
+          })
+        })
+      }, (err) => {
+        console.log('mp3 translated err', err)
+      })
     }
   }
 
@@ -181,6 +183,10 @@ class HomeView extends Component {
         <Dropzone onDrop={this.onDrop}>
           <p>Select or drop your voice note</p>
         </Dropzone>
+        <br />
+        {this.state.sentimentData &&
+          <Graph sentimentData={this.state.sentimentData} fileName={this.state.fileName} />
+        }
       </div>
     )
   }

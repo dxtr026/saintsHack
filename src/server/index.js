@@ -131,75 +131,98 @@ app.post('/upload', (req, res, next) => {
       cmd.get(`./ffmpeg -i ./${file.name} -f mp3 ./audioTmp/output.mp3`, (err, data, stderr) => {
         if (err) { return res.status(500).send(err) }
 
-        cmd.get(`./ffmpeg -i ./audioTmp/output.mp3 -af silencedetect=noise=-30dB:d=0.5 -f null - 2> ./audioTmp/vol.txt; cat ./audioTmp/vol.txt | grep 'silence_start' > ./audioTmp/silence_start.txt; cat ./audioTmp/vol.txt | grep 'silence_end' > ./audioTmp/silence_end.txt; ./ffmpeg -i ./audioTmp/output.mp3 2>&1 | grep Duration | cut -d ' ' -f 4 | sed s/,// > ./audioTmp/duration.txt`, (err, data, stderr) => {
-          const silenceStart = fs.readFileSync('./audioTmp/silence_start.txt').toString()
-          const silenceEnd = fs.readFileSync('./audioTmp/silence_end.txt').toString()
-          const duration = fs.readFileSync('./audioTmp/duration.txt').toString().split(':')
+        // cmd.get(`./ffmpeg -i ./audioTmp/output.mp3 -af silencedetect=noise=-30dB:d=0.5 -f null - 2> ./audioTmp/vol.txt; cat ./audioTmp/vol.txt | grep 'silence_start' > ./audioTmp/silence_start.txt; cat ./audioTmp/vol.txt | grep 'silence_end' > ./audioTmp/silence_end.txt; ./ffmpeg -i ./audioTmp/output.mp3 2>&1 | grep Duration | cut -d ' ' -f 4 | sed s/,// > ./audioTmp/duration.txt`, (err, data, stderr) => {
+        //   const silenceStart = fs.readFileSync('./audioTmp/silence_start.txt').toString()
+        //   const silenceEnd = fs.readFileSync('./audioTmp/silence_end.txt').toString()
+        //   const duration = fs.readFileSync('./audioTmp/duration.txt').toString().split(':')
 
-          const durat = duration[0] * 3600 + duration[1] * 60 + duration[2] * 1
+        //   const durat = duration[0] * 3600 + duration[1] * 60 + duration[2] * 1
 
-          starts.push(0)
-          silenceStart.trim('\n').split('\n').forEach((ss) => {
-            starts.push(parseFloat(ss.split('silence_start: ')[1]))
-          })
-          silenceEnd.trim('\n').split('\n').forEach((ss) => {
-            ends.push(parseFloat(ss.split('silence_end: ')[1].split(' | ')[0]))
-          })
-          if (ends.length < starts.length) {
-            while (ends.length !== starts.length) {
-              ends.push(durat)
+        //   starts.push(0)
+        //   silenceStart.trim('\n').split('\n').forEach((ss) => {
+        //     starts.push(parseFloat(ss.split('silence_start: ')[1]))
+        //   })
+        //   silenceEnd.trim('\n').split('\n').forEach((ss) => {
+        //     ends.push(parseFloat(ss.split('silence_end: ')[1].split(' | ')[0]))
+        //   })
+        //   if (ends.length < starts.length) {
+        //     while (ends.length !== starts.length) {
+        //       ends.push(durat)
+        //     }
+        //   }
+        //   if (ends.length !== starts.length) {
+        //     ends.push(durat)
+        //   }
+
+        //   const newDurations = []
+
+        //   if (starts.length && ends.length && starts.length === ends.length) {
+        //     starts.forEach((s, i) => {
+        //       newDurations.push(parseFloat((ends[i] - starts[i]).toFixed(3)))
+        //     })
+        //   }
+
+        //   const newProms = []
+        //   newDurations.forEach((d, i) => {
+        //     newProms.push(getCmdPromise(`./ffmpeg -i ./audioTmp/output.mp3 -ss ${starts[i]} -t ${d} -y ./audioTmp/fileout${i}.flac`))
+        //   })
+
+        //   Promise.all(newProms).then(() => {
+        //     fs.readdir('./audioTmp', (err, filenames) => {
+        //       if (err) {
+        //         return res.status(500).send(err)
+        //       }
+
+        //       const promiseArr = []
+        //       filenames.forEach((f) => {
+        //         if (f.indexOf('fileout') !== -1) {
+        //           promiseArr.push(recoSpeech(path.resolve(`./audioTmp/${f}`)))
+        //         }
+        //       })
+        //       return Promise.all(promiseArr).then((datas) => {
+        //         datas.forEach((d) => {
+        //           if (d.name && d.transcription) {
+        //             results.push(d.transcription)
+        //             transcript += ` ${d.transcription}`
+        //           }
+        //         })
+
+        //         cmd.get('rm ./audioTmp/*', (err, data, stderr) => {
+        //           res.send({data: transcript, results})
+        //         })
+        //       })
+        //     })
+        //   })
+        // })
+
+        cmd.get('./ffmpeg -i ./audioTmp/output.mp3 -f segment -segment_time 20 ./audioTmp/fileout%01d.flac', (err, data, stderr) => {
+          if (err) { return res.status(500).send(err) }
+
+          fs.readdir('./audioTmp', (err, filenames) => {
+            if (err) {
+              return res.status(500).send(err)
             }
-          }
-          if (ends.length !== starts.length) {
-            ends.push(durat)
-          }
 
-          const newDurations = []
-
-          if (starts.length && ends.length && starts.length === ends.length) {
-            starts.forEach((s, i) => {
-              newDurations.push(parseFloat((ends[i] - starts[i]).toFixed(3)))
-            })
-          }
-
-          const newProms = []
-          newDurations.forEach((d, i) => {
-            newProms.push(getCmdPromise(`./ffmpeg -i ./audioTmp/output.mp3 -ss ${starts[i]} -t ${d} -y ./audioTmp/fileout${i}.flac`))
-          })
-
-          Promise.all(newProms).then(() => {
-            fs.readdir('./audioTmp', (err, filenames) => {
-              if (err) {
-                return res.status(500).send(err)
+            const promiseArr = []
+            filenames.forEach((f) => {
+              if (f.indexOf('fileout') !== -1) {
+                promiseArr.push(recoSpeech(path.resolve(`./audioTmp/${f}`)))
               }
-
-              const promiseArr = []
-              filenames.forEach((f) => {
-                if (f.indexOf('fileout') !== -1) {
-                  promiseArr.push(recoSpeech(path.resolve(`./audioTmp/${f}`)))
+            })
+            return Promise.all(promiseArr).then((datas) => {
+              datas.forEach((d) => {
+                if (d.name && d.transcription) {
+                  results.push(d.transcription)
+                  transcript += ` ${d.transcription}`
                 }
               })
-              return Promise.all(promiseArr).then((datas) => {
-                datas.forEach((d) => {
-                  if (d.name && d.transcription) {
-                    results.push(d.transcription)
-                    transcript += ` ${d.transcription}`
-                  }
-                })
 
-                cmd.get('rm ./audioTmp/*', (err, data, stderr) => {
-                  res.send({data: transcript, results})
-                })
+              cmd.get('rm ./audioTmp/*', (err, data, stderr) => {
+                res.send({data: transcript, results})
               })
             })
           })
         })
-
-        // cmd.get('./ffmpeg -i ./audioTmp/output.mp3 -f segment -segment_time 30 ./audioTmp/fileout%01d.flac', (err, data, stderr) => {
-        //   if (err)
-        //     return res.status(500).send(err);
-
-        // })
       })
     })
 
