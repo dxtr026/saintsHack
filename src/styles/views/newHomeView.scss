@@ -4,3 +4,30 @@
 .home-cont {
   
 }
+
+.hp{
+	background-color: #f7f7f7; 
+	.hp-img{
+		background-repeat: no-repeat;
+		background-size: cover;
+		width: 100%;
+	}
+	.cs1{
+		background-image: url('/1.jpg');
+		height: 700px;
+	}
+	.cs2 {
+		background-image: url('/2.jpg');
+    	width: 1180px;
+		height: 500px;
+		margin: 50px;
+	}
+	.cs3 {
+		background-image: url('/3.jpg');
+		height: 780px;
+	}
+	.cs4 {
+		background-image: url('/4.jpg');
+		height: 500px;
+	}	
+}
