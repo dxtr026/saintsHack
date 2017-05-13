@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 if (!__SERVER__) {
-  require('styles/view/newHomeView.scss')
+  require('styles/views/newHomeView.scss')
 }
 
 

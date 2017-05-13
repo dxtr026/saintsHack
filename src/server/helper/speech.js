@@ -1,6 +1,6 @@
 const Speech = require('@google-cloud/speech');
 
-const projectId = 'alert-height-850';
+const projectId = '5950145102080';
 
 // Instantiates a client
 const speechClient = Speech({
@@ -9,8 +9,7 @@ const speechClient = Speech({
 
 // The audio file's encoding, sample rate in hertz, and BCP-47 language code
 const options = {
-  encoding: 'LINEAR16',
-  sampleRateHertz: 16000,
+  encoding: 'FLAC',
   languageCode: 'en-IN'
 };
 
@@ -19,13 +18,15 @@ const options = {
 
 
 const recoSpeech = (fileName) => {
-  speechClient.recognize(fileName, options)
+  return speechClient.recognize(fileName, options)
     .then((results) => {
       const transcription = results[0];
-      console.log(`Transcription: ${transcription}`);
+      console.log(`Transcription: fileName -> ${transcription}`);
+      return {name: fileName, transcription}
     })
     .catch((err) => {
-      console.error('ERROR:', err);
+      console.error('ERROR:', err, fileName);
+      return {}
     });
 }
 

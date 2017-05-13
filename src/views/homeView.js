@@ -3,7 +3,8 @@ import Dropzone from 'react-dropzone'
 import saveVoice from 'actions/common'
 import SummaryBot from 'utils/summary-bot'
 import getEnglishSpeech from 'actions/getEnglishSpeech'
-import getSummary from 'actions/getSummary'
+import getSummary, { getSentiment } from 'actions/getSummary'
+import { isValidSentence } from 'utils/grammar'
 
 class HomeView extends Component {
   constructor(props) {
@@ -15,8 +16,8 @@ class HomeView extends Component {
       hasRecognition: false,
       summary: ''
     }
-    this.speechParts = []
     this.recognition = null
+    this.finalSts = []
     this.onStart = this.onStart.bind(this)
     this.onError = this.onError.bind(this)
     this.onEnd = this.onEnd.bind(this)
@@ -56,8 +57,8 @@ class HomeView extends Component {
   }
 
   onEnd (event) {
-    console.log('ho rha hai kya')
     this.setState({recognizing: false})
+    console.log('==>> khatam hua ==>> ', this.finalSts.join('. '))
   }
 
   createSummary (response) {
@@ -82,8 +83,10 @@ class HomeView extends Component {
 
   onResult (event) {
     let interimScript = ''
+    // console.log(event)
     // let finalScript = this.state.finalScript
     for (let i = event.resultIndex; i < event.results.length; ++i) {
+      // console.log('--->>',event.results[i][0].transcript)
       interimScript += event.results[i][0].transcript
       // if (event.results[i].isFinal) {
       // } else {
@@ -91,24 +94,24 @@ class HomeView extends Component {
       // }
     }
     // console.log(interimScript)
-    this.speechParts.push(interimScript)
-    console.log('-->> parts', interimScript)
-    this.setState({finalScript: `${interimScript}`})
-    if (this.englishTimer) {
-      clearTimeout(this.englishTimer)
-      this.englishTimer = null
+    if (!!interimScript) {
+      this.postFinalScript(interimScript)
     }
-    this.englishTimer = setTimeout(() => {
-      this.getLanguageResults(interimScript).then((results) => {
-        this.setState({finalEnglishScript: results})
-        getSummary(results).then(this.createSummary)
-      })
-      this.getLanguageResults(interimScript, 'hi').then((results) => {
-        this.getLanguageResults(results).then((res) => {
-          console.log('english to hindi to english', res)          
-        })
-      })
-    }, 2000)
+  }
+
+  postFinalScript (interimScript) {
+    this.setState({finalScript: `${interimScript}`})
+    this.finalSts.push(interimScript)
+    // if (this.englishTimer) {
+    //   clearTimeout(this.englishTimer)
+    //   this.englishTimer = null
+    // }
+    // this.englishTimer = setTimeout(() => {
+    //   this.getLanguageResults(interimScript).then((results) => {
+    //     this.setState({finalEnglishScript: results})
+    //     getSummary(results).then(this.createSummary)
+    //   })
+    // }, 2000)
   }
 
   startReco () {
@@ -129,16 +132,35 @@ class HomeView extends Component {
   }
 
   onDrop (files) {
-    for(let i=0;i<=files.length;i++){
-      const opts = {
-        file: files[i],
-        key: 'AIzaSyAWCze2AXgAA7kgUMtLubpvmLuDGkbUP8g'
+    for(let i=0;i<=files.length-1;i++){
+      if (files[i]) {
+        saveVoice(files[i]).then((res) => {
+          console.log('mp3 translated',res.data)
+          // const finalStr = ''
+          const finalStr = res.data.results.join('. ')
+          this.setState({finalScript: finalStr})  
+          this.postFinalScript(finalStr)
+          // const finalStr = res.data.data
+          let convertStr = []
+          const sentenceArr = []
+          res.data.results.forEach((r) => {
+            if (isValidSentence(r)) {
+              sentenceArr.push(this.getLanguageResults(r))
+            }
+          })
+          Promise.all(sentenceArr).then((ss) => {
+            ss.forEach((s) => {
+              convertStr.push(s)
+            })
+            this.setState({finalEnglishScript: convertStr.join('. ')})
+            getSentiment(convertStr.join('. ')).then(({data}) => {
+              console.log('sentiment data',data)
+            })
+          })
+        }, (err) => {
+          console.log('mp3 translated err',err)
+        })
       }
-      saveVoice(files[i])
-      // speech(opts, function (err, results) {
-      //   console.log(results);
-      //   // [{result: [{alternative: [{transcript: '...'}]}]}]
-      // })
     }
   }
 
@@ -151,13 +173,14 @@ class HomeView extends Component {
         <h3> {this.state.finalScript}</h3>
         <br />
         <h2>English Translation</h2>
-        <h4> {this.state.finalEnglishScript} </h4>
+        <h3> {this.state.finalEnglishScript} </h3>
+        <br />
+        <h2> Summary from our Bot </h2>
+        <h3> {this.state.summary} </h3>
+        <br />
         <Dropzone onDrop={this.onDrop}>
           <p>Select or drop your voice note</p>
         </Dropzone>
-        <br />
-        <h2> Summary from our Bot </h2>
-        <h4> {this.state.summary} </h4>
       </div>
     )
   }

@@ -7,4 +7,12 @@ const getSummary = (text) => {
   })
 }
 
+const getSentiment = () => {
+  return axios({
+    url: `http://172.16.2.185:3000/get-sentiment-score?text=${text}`,
+    method: 'POST'
+  })
+}
+
+export { getSentiment }
 export default getSummary

@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const saveVoice = (file) => {
   const data = new FormData()
-  data.append('mp3', file, file.name);
+  data.append('file', file, file.name);
   return axios({
     url: `/upload`,
     headers: { 'content-type': 'multipart/form-data' },
