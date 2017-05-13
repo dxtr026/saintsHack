@@ -14,9 +14,7 @@ class NewHomeView extends Component {
     return (
       <div className='hp'>
         <div className='cs1 hp-img'></div>
-        <div className='cs2 hp-img'></div>
-        <div className='cs3 hp-img'></div>
-        <div className='cs4 hp-img'></div>
+        <a className='btn-action' href='/call'></a>
       </div>
     )
   }

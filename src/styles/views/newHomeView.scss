@@ -10,8 +10,8 @@
 .hp{
 	background-color: #f7f7f7;
 	.cs1{
-		background-image: url('/1.jpg');
-		height: 700px;
+		background-image: url('/marketing.png');
+		height: 3400px;
 	}
 	.cs2 {
 		background-image: url('/2.jpg');
@@ -28,7 +28,17 @@
 		height: 500px;
 	}	
 }
-
+.btn-action{
+	position: absolute;
+	top: 1860px;
+	background: transparent;
+	z-index: 4;
+	left: 115px;
+	width: 200px;
+	display: block;
+	height: 50px;
+	width: 260px;
+}
 .call-p{
 	position: relative;
 	.call-1{
