@@ -119,6 +119,7 @@ app.get('/getFileData', (req, res, next) => {
 
   // let file = req.files.file
   const file = {name: 'ravi_joshi.ogg'}
+  // const file = {name: 'akshay_rahul.ogg'}
   const fileName = file.name.split('.')[0]
   // const pathN = path.resolve(`./${file.name}`)
   // debugger

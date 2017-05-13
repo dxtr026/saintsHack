@@ -33,8 +33,8 @@ class HomeView extends Component {
 
   componentDidMount () {
     this.startReco()
-    getFileData().then((data) => {
-      debugger
+    getFileData().then(({summary, sentimentData}) => {
+      this.setState({summary, sentimentData})
     })
   }
 
